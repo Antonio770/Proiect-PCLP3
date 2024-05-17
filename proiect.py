@@ -78,6 +78,27 @@ def task_2():
     plt.savefig('task2-plots/Male-Female.png')
     plt.show()
 
+def task_3():
+    print("\n-------------- TASK 3 --------------\n")
+    print("Histogramele au fost adaugate in directorul task3-plots.\n")
+    # Pentru fiecare coloana din dataframe, verificam daca aceasta contine
+    # valori numerice (int sau float) si construim histogramele.
+    for column in train_df:
+        x = train_df[column]
+        if x.dtype == int or x.dtype == float:
+            plt.figure()
+            plt.hist(x, bins = 20, edgecolor = 'black')
+            plt.title(f"{column} histogram")
+            plt.ylabel("Nr. People")
+            plt.xlabel(column)
+            plt.savefig(f"task3-plots/{column}")
+            plt.show()
+
+def task_4():
+    print("\n-------------- TASK 4 --------------\n")
+
+    
+
 # Determinam ce task vrem sa rulam
 # Daca nu se specifica un task, se vor executa toate
 task = 0
@@ -95,3 +116,9 @@ if task == 1 or task == 0:
 # Task 2
 if task == 2 or task == 0:
     task_2()
+
+if task == 3 or task == 0:
+    task_3()
+
+if task == 4 or task == 0:
+    task_4()
