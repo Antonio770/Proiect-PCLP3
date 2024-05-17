@@ -6,12 +6,12 @@ import matplotlib.pyplot as plt
 def task_1():
     print("-------------- TASK 1 --------------\n")
 
-    print(f"Numarul de coloane: {nr_columns}\n")
-    print(f"Tipul de date al fiecarei coloane:\n{train_df.dtypes}\n")
-    print(f"Numarul de valori lipsa pentru fiecare coloana:\n{train_df.isnull().sum()}\n")
+    print(f"Number of columns: {nr_columns}\n")
+    print(f"Columns data types:\n{train_df.dtypes}\n")
+    print(f"Number of missing values for each column:\n{train_df.isnull().sum()}\n")
 
-    print(f"Numarul de linii: {nr_rows}")
-    print(f"Numarul de linii duplicate: {train_df.duplicated().sum()}\n")
+    print(f"Number of rows: {nr_rows}")
+    print(f"Number of duplicate rows: {train_df.duplicated().sum()}\n")
 
 def task_2():
     print("\n-------------- TASK 2 --------------\n")
@@ -19,8 +19,8 @@ def task_2():
     # Procentul de supravietuitori
     nr_survived = (train_df['Survived']).sum()
     survived_percentage = (nr_survived / nr_rows)
-    print(f"Procentul persoanelor care au supravietuit: {survived_percentage : %}")
-    print(f"Procentul persoanelor care nu au supravietuit: {1 - survived_percentage : %}\n")
+    print(f"Percentage of people that survived: {survived_percentage : %}")
+    print(f"Percentage of people that didn't survive: {1 - survived_percentage : %}\n")
 
     # Procentul pasagerilor din fiecare clasa
     classes = train_df['Pclass']
@@ -34,7 +34,7 @@ def task_2():
     class_percentage = class_count[1:] / nr_rows
 
     for x in unique_classes:
-        print(f"Clasa {x}: {class_percentage[x - 1] : %}")
+        print(f"Class {x}: {class_percentage[x - 1] : %}")
 
     # Procentul de barbati si de femei
     genders = train_df['Sex']
@@ -50,14 +50,15 @@ def task_2():
 
     genders_percentage = genders_count / nr_rows
 
-    print(f"\nProcentul de barbati: {genders_percentage[1] : %}")
-    print(f"Procentul de femei: {genders_percentage[0] : %}\n")
+    print(f"\nMale percentage: {genders_percentage[1] : %}")
+    print(f"Female percentage: {genders_percentage[0] : %}\n")
 
     # Realizam graficele pentru reprezentarea rezultatelor
     survived_array = [1 - survived_percentage, survived_percentage]
     plt.figure()
     plt.bar(["False", "True"], survived_array)
     plt.xticks(["False", "True"])
+    plt.title("Survivors plot")
     plt.ylabel("Percentage")
     plt.xlabel("Survived")
     plt.savefig("task2-plots/Survivors.png")
@@ -66,6 +67,7 @@ def task_2():
     plt.figure()
     plt.bar(unique_classes, class_percentage)
     plt.xticks(unique_classes)
+    plt.title("Classes plot")
     plt.ylabel("Percentage")
     plt.xlabel("Classes")
     plt.savefig("task2-plots/Classes.png")
@@ -73,6 +75,7 @@ def task_2():
 
     plt.figure()
     plt.bar(unique_genders, genders_percentage)
+    plt.title("Genders plot")
     plt.ylabel("Percentage")
     plt.xlabel("Gender")
     plt.savefig('task2-plots/Male-Female.png')
@@ -80,7 +83,7 @@ def task_2():
 
 def task_3():
     print("\n-------------- TASK 3 --------------\n")
-    print("Histogramele au fost adaugate in directorul task3-plots.\n")
+    print("Histograms added to task3-plots directory.\n")
     # Pentru fiecare coloana din dataframe, verificam daca aceasta contine
     # valori numerice (int sau float) si construim histogramele.
     for column in train_df:
@@ -96,8 +99,22 @@ def task_3():
 
 def task_4():
     print("\n-------------- TASK 4 --------------\n")
+    # print("Valori lipsa => Proportie")
+    for column in train_df:
+        x = train_df[column]
+        missing_values = x.isnull().sum()
 
-    
+        if missing_values != 0:
+            survived_array = [0, 0]
+            for i in range(len(x)):
+                if x[i] != x[i]:
+                    survived_array[train_df.at[i, 'Survived']] += 1
+
+            print(f"{column}:\nMissing values: {missing_values} out of {nr_rows} => Proportion = {missing_values / nr_rows : .5f}")
+            print(f"Did not survive = {survived_array[0]}, Survived = {survived_array[1]}\n")
+
+def task_5():
+    return
 
 # Determinam ce task vrem sa rulam
 # Daca nu se specifica un task, se vor executa toate
@@ -109,11 +126,9 @@ train_df = pd.read_csv('input/train.csv')
 nr_columns = len(train_df.axes[1])
 nr_rows = len(train_df.axes[0])
 
-# Task 1
 if task == 1 or task == 0:
     task_1()
 
-# Task 2
 if task == 2 or task == 0:
     task_2()
 
@@ -122,3 +137,6 @@ if task == 3 or task == 0:
 
 if task == 4 or task == 0:
     task_4()
+
+if task == 5 or task == 0:
+    task_5()
