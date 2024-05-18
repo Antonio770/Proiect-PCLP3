@@ -2,6 +2,7 @@ import sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import re
 
 def task_1():
     print("-------------- TASK 1 --------------\n")
@@ -282,6 +283,47 @@ def task_8():
     train_df.to_csv("output/task8/mean_train.csv", index=False)
     print("Added 'mean_train.csv' to output/task8 directory\n")
 
+def task_9():
+    print("\n-------------- TASK 9 --------------\n")
+    
+    # Iteram prin setul de antrenament si construim 2 dictionare care vor
+    # contine titlurile de noblete ale pasagerilor
+    male_dictionary = {}
+    female_dictionary = {}
+
+    for i in range(nr_rows):
+        name = train_df.at[i, 'Name']
+        title = re.findall(", ([^\.]+)\.", name)
+
+        if train_df.at[i, 'Sex'] == 'male':
+            if title[0] not in male_dictionary:
+                male_dictionary[title[0]] = 1
+            else:
+                male_dictionary[title[0]] += 1
+        else:
+            if title[0] not in female_dictionary:
+                female_dictionary[title[0]] = 1
+            else:
+                female_dictionary[title[0]] += 1
+
+    # Reprezentam grafic repartitia titlurilor de noblete
+    plt.figure()
+    plt.title("Male Titles")
+    plt.ylabel("Number of passangers")
+    plt.xlabel("Title")
+    plt.bar(male_dictionary.keys(), male_dictionary.values(), width=0.5)
+    plt.savefig("output/task9/MaleTitles.png")
+    plt.show()
+
+    plt.figure()
+    plt.title("Female Titles")
+    plt.ylabel("Number of passangers")
+    plt.xlabel("Title")
+    plt.bar(female_dictionary.keys(), female_dictionary.values(), width=0.5)
+    plt.savefig("output/task9/FemaleTitles.png")
+    plt.show()
+
+    print("Added Title repartition graphs to output/task9 directory.")
 
 # Citim dataframe-ul din fisier si determinam numarul de linii si coloane
 train_df = pd.read_csv('input/train.csv')
@@ -310,3 +352,5 @@ if task == 7 or task == 0:
     task_7()
 if task == 8 or task == 0:
     task_8()
+if task == 9 or task == 0:
+    task_9()
