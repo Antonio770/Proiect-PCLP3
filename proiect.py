@@ -191,6 +191,55 @@ def task_6():
     plt.savefig("task6-plots/MaleSurvivors.png")
     plt.show()
 
+def task_7():
+    print("\n-------------- TASK 7 --------------\n")
+
+    # Calculam numarul total de copii si numarul de copii care au supravietuit.
+    # Facem acelasi lucru si pentru adulti
+    children_count = 0
+    children_survivors = 0
+    adults_count = 0
+    adults_survivors = 0
+    ages = train_df['Age']
+    survivors = train_df['Survived']
+
+    for i in range(len(ages)):
+        if ages[i] != ages[i]:
+            continue
+        elif ages[i] < 18:
+            children_count += 1
+            if survivors[i] == 1:
+                children_survivors += 1
+        else:
+            adults_count += 1
+            if survivors[i] == 1:
+                adults_survivors += 1
+
+    # Calculam procentul de copii aflati la bord. Rezultatul va fi diferit daca ignoram
+    # persoanele a caror varsta nu o cunoastem
+    children_percentage = children_count / (children_count + adults_count)
+    children_percentage_2 = children_count / nr_rows
+    print(f"Percentage of children aboard: {children_percentage : %} (ignoring unknown passangers with unknown ages)")
+    print(f"Percentage of children aboard: {children_percentage_2 : %}\n")
+
+    # Calculam rata de supravietuire pentru copii si adulti
+    children_surviving_rate = children_survivors / children_count
+    adults_surviving_rate = adults_survivors / adults_count
+    print(f"Children rate of survival: {children_surviving_rate : 0.4f}")
+    print(f"Adult surviving rate: {adults_surviving_rate : 0.4f}")
+
+    # Realizam graficul care pune in evidenta ratele de supravietuire
+    plt.figure()
+    plt.title("Survival rates")
+    plt.ylabel("Survival rate")
+    plt.bar(['Children', 'Adults'], [children_surviving_rate, adults_surviving_rate])
+    plt.savefig("task7-plots/SurvivalRates.png")
+    plt.show()
+
+# Citim dataframe-ul din fisier si determinam numarul de linii si coloane
+train_df = pd.read_csv('input/train.csv')
+nr_columns = len(train_df.axes[1])
+nr_rows = len(train_df.axes[0])
 
 # Determinam ce task vrem sa rulam
 # Daca nu se specifica un task, se vor executa toate
@@ -198,24 +247,17 @@ task = 0
 if len(sys.argv) > 1:
     task = int(sys.argv[1])
 
-train_df = pd.read_csv('input/train.csv')
-nr_columns = len(train_df.axes[1])
-nr_rows = len(train_df.axes[0])
-
 if task == 1 or task == 0:
     task_1()
-
 if task == 2 or task == 0:
     task_2()
-
 if task == 3 or task == 0:
     task_3()
-
 if task == 4 or task == 0:
     task_4()
-
 if task == 5 or task == 0:
     task_5()
-
 if task == 6 or task == 0:
     task_6()
+if task == 7 or task == 0:
+    task_7()
