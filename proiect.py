@@ -114,27 +114,33 @@ def task_4():
             print(f"Did not survive = {survived_array[0]}, Survived = {survived_array[1]}\n")
 
 def task_5():
+    if task == 5 or task == 0:
+        print("\n-------------- TASK 5 --------------\n")
+        print("Added 'AgeCategory' column to the dataframe and created 'AgeCategories' plot in task5-plots directory\n")
+
     # Initializam o lista care va contine numarul de persoane din fiecare
     # categorie de varsta si adaugam coloana AgeCategory imediat dupa coloana Age.
     # Vom incadra persoanele a caror varsta este necunoscuta in categoria 0.
-    category = [0, 0, 0, 0]
+    category = [0, 0, 0, 0, 0]
     ages = train_df['Age']
     train_df.insert(6, 'AgeCategory', 0)
 
     # Parcurgem coloana cu varstele, incrementam valoarea corespunzatoare din lista
     # de categorii si actualizam categoria de varsta a persoanei din tabel.
     for i in range(len(ages)):
-        if ages[i] <= 20:
+        if ages[i] != ages[i]:
             category[0] += 1
+        elif ages[i] <= 20:
+            category[1] += 1
             train_df.at[i, 'AgeCategory'] = 1
         elif ages[i] <= 40:
-            category[1] += 1
+            category[2] += 1
             train_df.at[i, 'AgeCategory'] = 2
         elif ages[i] <= 60:
-            category[2] += 1
-            train_df.at[i, 'AgeCategory'] = 3
-        elif ages[i] == ages[i]:
             category[3] += 1
+            train_df.at[i, 'AgeCategory'] = 3
+        else:
+            category[4] += 1
             train_df.at[i, 'AgeCategory'] = 4
 
     # Realizam graficul pentru a evidentia rezultatele
@@ -142,9 +148,47 @@ def task_5():
     plt.title("Age categories")
     plt.ylabel("Number of passangers")
     plt.xlabel("Age category")
-    plt.xticks([1, 2, 3, 4])
-    plt.bar([1, 2, 3, 4], category)
+    plt.xticks([0, 1, 2, 3, 4])
+    plt.bar([0, 1, 2, 3, 4], category)
     plt.savefig("task5-plots/AgeCategories.png")
+    plt.show()
+
+def task_6():
+    print("\n-------------- TASK 6 --------------\n")
+    print("'MaleSurvivors' graph added to task6-plots\n")
+    if task == 6:
+        task_5()
+
+    # Calculam numarul total de barbati si numarul de supravietuitori in functie
+    # de categoria de varsta.
+    male_survivors = [0, 0, 0, 0, 0]
+    total_males = [0, 0, 0, 0, 0]
+    age_categories = train_df['AgeCategory']
+    genders = train_df['Sex']
+    survivors = train_df['Survived']
+
+    for i in range(nr_rows):
+        if genders[i] == 'male':
+            total_males[age_categories[i]] += 1
+            if survivors[i] == True:
+                male_survivors[age_categories[i]] += 1
+
+    # Afisam numarul de supravietuitori din fiecare categorie de varsta
+    for i in range(len(male_survivors)):
+        print(f"Category {i}: {male_survivors[i]} survivors")
+
+    # Determinam procentul de barbati supravietuitori din fiecare categorie de varsta.
+    survivors_percentage = [x/y for x, y in zip(male_survivors, total_males)]
+
+    # Realizam graficul pentru a pune in evidenta modul in care varsta influenteaza
+    # procentul de supravietuire al barbatilor
+    plt.figure()
+    plt.title("Male survivors by age category")
+    plt.ylabel("Percentage of survivors")
+    plt.xlabel("Age category")
+    plt.xticks([0, 1, 2, 3, 4])
+    plt.bar([0, 1, 2, 3, 4], survivors_percentage)
+    plt.savefig("task6-plots/MaleSurvivors.png")
     plt.show()
 
 
@@ -172,3 +216,6 @@ if task == 4 or task == 0:
 
 if task == 5 or task == 0:
     task_5()
+
+if task == 6 or task == 0:
+    task_6()
