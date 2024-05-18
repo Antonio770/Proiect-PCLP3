@@ -114,7 +114,39 @@ def task_4():
             print(f"Did not survive = {survived_array[0]}, Survived = {survived_array[1]}\n")
 
 def task_5():
-    return
+    # Initializam o lista care va contine numarul de persoane din fiecare
+    # categorie de varsta si adaugam coloana AgeCategory imediat dupa coloana Age.
+    # Vom incadra persoanele a caror varsta este necunoscuta in categoria 0.
+    category = [0, 0, 0, 0]
+    ages = train_df['Age']
+    train_df.insert(6, 'AgeCategory', 0)
+
+    # Parcurgem coloana cu varstele, incrementam valoarea corespunzatoare din lista
+    # de categorii si actualizam categoria de varsta a persoanei din tabel.
+    for i in range(len(ages)):
+        if ages[i] <= 20:
+            category[0] += 1
+            train_df.at[i, 'AgeCategory'] = 1
+        elif ages[i] <= 40:
+            category[1] += 1
+            train_df.at[i, 'AgeCategory'] = 2
+        elif ages[i] <= 60:
+            category[2] += 1
+            train_df.at[i, 'AgeCategory'] = 3
+        elif ages[i] == ages[i]:
+            category[3] += 1
+            train_df.at[i, 'AgeCategory'] = 4
+
+    # Realizam graficul pentru a evidentia rezultatele
+    plt.figure()
+    plt.title("Age categories")
+    plt.ylabel("Number of passangers")
+    plt.xlabel("Age category")
+    plt.xticks([1, 2, 3, 4])
+    plt.bar([1, 2, 3, 4], category)
+    plt.savefig("task5-plots/AgeCategories.png")
+    plt.show()
+
 
 # Determinam ce task vrem sa rulam
 # Daca nu se specifica un task, se vor executa toate
