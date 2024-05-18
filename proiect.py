@@ -2,6 +2,7 @@ import sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sb
 import re
 
 def task_1():
@@ -145,7 +146,7 @@ def task_5():
             train_df.at[i, 'AgeCategory'] = 4
 
     # Salvam noul dataframe
-    train_df.to_csv("output/task5/modified_train.csv", index=False)
+    train_df.to_csv("output/task5/AgeCategory_train.csv", index=False)
 
     # Realizam graficul pentru a evidentia rezultatele
     plt.figure()
@@ -159,7 +160,6 @@ def task_5():
 
 def task_6():
     print("\n-------------- TASK 6 --------------\n")
-    print("'MaleSurvivors' graph added to output/task6\n")
     if task == 6:
         task_5()
 
@@ -194,12 +194,13 @@ def task_6():
     plt.bar([0, 1, 2, 3, 4], survivors_percentage)
     plt.savefig("output/task6/MaleSurvivors.png")
     plt.show()
+    print("'MaleSurvivors' graph added to output/task6 directory\n")
 
 def task_7():
     print("\n-------------- TASK 7 --------------\n")
 
     # Calculam numarul total de copii si numarul de copii care au supravietuit.
-    # Facem acelasi lucru si pentru adulti
+    # Facem acelasi lucru si pentru adulti.
     children_count = 0
     children_survivors = 0
     adults_count = 0
@@ -219,20 +220,17 @@ def task_7():
             if survivors[i] == 1:
                 adults_survivors += 1
 
-    # Calculam procentul de copii aflati la bord. Rezultatul va fi diferit daca ignoram
-    # persoanele a caror varsta nu o cunoastem
-    children_percentage = children_count / (children_count + adults_count)
-    children_percentage_2 = children_count / nr_rows
-    print(f"Percentage of children aboard: {children_percentage : %} (ignoring unknown passangers with unknown ages)")
-    print(f"Percentage of children aboard: {children_percentage_2 : %}\n")
+    # Calculam procentul de copii aflati la bord.
+    children_percentage = children_count / nr_rows
+    print(f"Percentage of children aboard: {children_percentage : %}\n")
 
-    # Calculam rata de supravietuire pentru copii si adulti
+    # Calculam rata de supravietuire pentru copii si adulti.
     children_surviving_rate = children_survivors / children_count
     adults_surviving_rate = adults_survivors / adults_count
     print(f"Children rate of survival: {children_surviving_rate : 0.4f}")
     print(f"Adult surviving rate: {adults_surviving_rate : 0.4f}\n")
 
-    # Realizam graficul care pune in evidenta ratele de supravietuire
+    # Realizam graficul care pune in evidenta ratele de supravietuire.
     plt.figure()
     plt.title("Survival rates")
     plt.ylabel("Survival rate")
@@ -325,13 +323,65 @@ def task_9():
 
     print("Added Title repartition graphs to output/task9 directory.")
 
-# Citim dataframe-ul din fisier si determinam numarul de linii si coloane
+def task_10():
+    print("\n-------------- TASK 10 --------------\n")
+
+    # Construim un dictionar care contine toate numele de familie
+    # impreuna cu numarul de aparitii al acestora.
+    family_dictionary = {}
+
+    for i in range(nr_rows):
+        name = train_df.at[i, 'Name']
+        family_name = re.findall(".*,", name)
+        family_name = family_name[0][:-1]
+
+        if family_name in family_dictionary:
+            family_dictionary[family_name] += 1
+        else:
+            family_dictionary[family_name] = 1
+
+    # Construim 2 dictionare pentru a calcula numarul de
+    # supravietuitori cu rude, respectiv fara rude.
+    survived_not_alone = {True: 0, False: 0}
+    survived_alone = {True: 0, False: 0}
+
+    for i in range(nr_rows):
+        name = train_df.at[i, 'Name']
+        family_name = re.findall(".*,", name)
+        family_name = family_name[0][:-1]
+
+        survived = bool(train_df.at[i, 'Survived'])
+
+        if family_dictionary[family_name] == 1:
+            survived_alone[survived] += 1
+        else:
+            survived_not_alone[survived] += 1
+
+    survived = {'Alone': survived_alone, 'Not_Alone': survived_not_alone}
+
+    # Calculam procentul de supravietuitori din cele 2 categorii.
+    alone_percentage = survived['Alone'][True] / (survived['Alone'][True] + survived['Alone'][False])
+    not_alone_percentage = survived['Not_Alone'][True] / (survived['Not_Alone'][True] + survived['Not_Alone'][False])
+
+    print(f"Percentage of people with no relatives that survived:{alone_percentage : .2%}")
+    print(f"Percentage of people with relatives that survived:{not_alone_percentage : .2%}\n")
+
+    # Realizam graficul pentru a pune in evidenta relatia dintre tarif, clasa.
+    # si starea de supravietuire a primelor 100 de inregistrari din train.csv.
+    plt.figure()
+    sb.catplot(data=train_df.head(100), x='Pclass', y='Fare', hue='Survived', kind="swarm", s=20, aspect=2)
+    plt.savefig("output/task10/Pclass-Fare.png")
+    plt.show()
+    print("Added 'Pclass-Fare' relation graph to output/task10 directory\n")
+
+
+# Citim dataframe-ul din fisier si determinam numarul de linii si coloane.
 train_df = pd.read_csv('input/train.csv')
 nr_columns = len(train_df.axes[1])
 nr_rows = len(train_df.axes[0])
 
-# Determinam ce task vrem sa rulam
-# Daca nu se specifica un task, se vor executa toate
+# Determinam ce task vrem sa rulam.
+# Daca nu se specifica un task, se vor executa toate.
 task = 0
 if len(sys.argv) > 1:
     task = int(sys.argv[1])
@@ -354,3 +404,5 @@ if task == 8 or task == 0:
     task_8()
 if task == 9 or task == 0:
     task_9()
+if task == 10 or task == 0:
+    task_10()
