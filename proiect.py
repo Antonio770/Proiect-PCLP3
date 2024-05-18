@@ -61,7 +61,7 @@ def task_2():
     plt.title("Survivors plot")
     plt.ylabel("Percentage")
     plt.xlabel("Survived")
-    plt.savefig("task2-plots/Survivors.png")
+    plt.savefig("output/task2/Survivors.png")
     plt.show()
 
     plt.figure()
@@ -70,7 +70,7 @@ def task_2():
     plt.title("Classes plot")
     plt.ylabel("Percentage")
     plt.xlabel("Classes")
-    plt.savefig("task2-plots/Classes.png")
+    plt.savefig("output/task2/Classes.png")
     plt.show()
 
     plt.figure()
@@ -78,12 +78,12 @@ def task_2():
     plt.title("Genders plot")
     plt.ylabel("Percentage")
     plt.xlabel("Gender")
-    plt.savefig('task2-plots/Male-Female.png')
+    plt.savefig('output/task2/Male-Female.png')
     plt.show()
 
 def task_3():
     print("\n-------------- TASK 3 --------------\n")
-    print("Histograms added to task3-plots directory.\n")
+    print("Histograms added to output/task3 directory.\n")
     # Pentru fiecare coloana din dataframe, verificam daca aceasta contine
     # valori numerice (int sau float) si construim histogramele.
     for column in train_df:
@@ -94,12 +94,12 @@ def task_3():
             plt.title(f"{column} histogram")
             plt.ylabel("Nr. People")
             plt.xlabel(column)
-            plt.savefig(f"task3-plots/{column}")
+            plt.savefig(f"output/task3/{column}")
             plt.show()
 
 def task_4():
     print("\n-------------- TASK 4 --------------\n")
-    # print("Valori lipsa => Proportie")
+
     for column in train_df:
         x = train_df[column]
         missing_values = x.isnull().sum()
@@ -116,7 +116,7 @@ def task_4():
 def task_5():
     if task == 5 or task == 0:
         print("\n-------------- TASK 5 --------------\n")
-        print("Added 'AgeCategory' column to the dataframe and created 'AgeCategories' plot in task5-plots directory\n")
+        print("Added 'AgeCategory' column to the dataframe and created 'AgeCategories' plot in output/task5 directory\n")
 
     # Initializam o lista care va contine numarul de persoane din fiecare
     # categorie de varsta si adaugam coloana AgeCategory imediat dupa coloana Age.
@@ -143,6 +143,9 @@ def task_5():
             category[4] += 1
             train_df.at[i, 'AgeCategory'] = 4
 
+    # Salvam noul dataframe
+    train_df.to_csv("output/task5/modified_train.csv")
+
     # Realizam graficul pentru a evidentia rezultatele
     plt.figure()
     plt.title("Age categories")
@@ -150,12 +153,12 @@ def task_5():
     plt.xlabel("Age category")
     plt.xticks([0, 1, 2, 3, 4])
     plt.bar([0, 1, 2, 3, 4], category)
-    plt.savefig("task5-plots/AgeCategories.png")
+    plt.savefig("output/task5/AgeCategories.png")
     plt.show()
 
 def task_6():
     print("\n-------------- TASK 6 --------------\n")
-    print("'MaleSurvivors' graph added to task6-plots\n")
+    print("'MaleSurvivors' graph added to output/task6\n")
     if task == 6:
         task_5()
 
@@ -188,7 +191,7 @@ def task_6():
     plt.xlabel("Age category")
     plt.xticks([0, 1, 2, 3, 4])
     plt.bar([0, 1, 2, 3, 4], survivors_percentage)
-    plt.savefig("task6-plots/MaleSurvivors.png")
+    plt.savefig("output/task6/MaleSurvivors.png")
     plt.show()
 
 def task_7():
@@ -226,15 +229,40 @@ def task_7():
     children_surviving_rate = children_survivors / children_count
     adults_surviving_rate = adults_survivors / adults_count
     print(f"Children rate of survival: {children_surviving_rate : 0.4f}")
-    print(f"Adult surviving rate: {adults_surviving_rate : 0.4f}")
+    print(f"Adult surviving rate: {adults_surviving_rate : 0.4f}\n")
 
     # Realizam graficul care pune in evidenta ratele de supravietuire
     plt.figure()
     plt.title("Survival rates")
     plt.ylabel("Survival rate")
     plt.bar(['Children', 'Adults'], [children_surviving_rate, adults_surviving_rate])
-    plt.savefig("task7-plots/SurvivalRates.png")
+    plt.savefig("output/task7/SurvivalRates.png")
     plt.show()
+    print("Added 'SurvivalRates' graph to output/task7 directory.\n")
+
+def task_8():
+    print("\n-------------- TASK 8 --------------\n")
+
+    # Cautam coloanele care au valori lipsa
+    for column in train_df:
+        values = train_df[column]
+
+        # Daca am gasit o coloana cu valori lipsa, verificam tipul de date din coloana.
+        if values.isnull().sum() != 0:
+
+            # Daca valorile sunt numerice, calculam media acestora.
+            # Daca valorile nu sunt numerice, o cautam pe cea mai frecventa.
+            if values.dtype == int or values.dtype == float:
+                mean_value = round(values.mean())
+            else:
+                mean_value = train_df[column].mode()[0]
+
+            # Inlocuim toate inregistrarile NaN cu valoarea gasita anterior
+            for i in range(nr_rows):
+                if train_df.at[i, column] != train_df.at[i, column]:
+                    train_df.at[i, column] = mean_value
+
+    train_df.to_csv("output/task8/mean_train.csv")
 
 # Citim dataframe-ul din fisier si determinam numarul de linii si coloane
 train_df = pd.read_csv('input/train.csv')
@@ -261,3 +289,5 @@ if task == 6 or task == 0:
     task_6()
 if task == 7 or task == 0:
     task_7()
+if task == 8 or task == 0:
+    task_8()
