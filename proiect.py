@@ -144,7 +144,7 @@ def task_5():
             train_df.at[i, 'AgeCategory'] = 4
 
     # Salvam noul dataframe
-    train_df.to_csv("output/task5/modified_train.csv")
+    train_df.to_csv("output/task5/modified_train.csv", index=False)
 
     # Realizam graficul pentru a evidentia rezultatele
     plt.figure()
@@ -250,19 +250,38 @@ def task_8():
         # Daca am gasit o coloana cu valori lipsa, verificam tipul de date din coloana.
         if values.isnull().sum() != 0:
 
+            # Impartim toate persoanele in 2 categorii, in functie de coloana 'Survived'
+            survived = [[], []]
+            for i in range(nr_rows):
+                if values[i] == values[i]:
+                    if train_df.at[i, 'Survived'] == 0:
+                        survived[0].append(values[i])
+                    else:
+                        survived[1].append(values[i])
+
+
             # Daca valorile sunt numerice, calculam media acestora.
             # Daca valorile nu sunt numerice, o cautam pe cea mai frecventa.
             if values.dtype == int or values.dtype == float:
-                mean_value = round(values.mean())
+                mean_value_0 = round(np.average(survived[0]))
+                mean_value_1 = round(np.average(survived[1]))
             else:
-                mean_value = train_df[column].mode()[0]
+                unique_0, count_0 = np.unique(survived[0], return_counts=True)
+                mean_value_0 = unique_0[np.argmax(count_0)]
+                unique_1, count_1 = np.unique(survived[1], return_counts=True)
+                mean_value_1 = unique_1[np.argmax(count_1)]
 
             # Inlocuim toate inregistrarile NaN cu valoarea gasita anterior
             for i in range(nr_rows):
                 if train_df.at[i, column] != train_df.at[i, column]:
-                    train_df.at[i, column] = mean_value
+                    if train_df.at[i, 'Survived'] == 0:
+                        train_df.at[i, column] = mean_value_0
+                    else:
+                        train_df.at[i, column] = mean_value_1
+                        
+    train_df.to_csv("output/task8/mean_train.csv", index=False)
+    print("Added 'mean_train.csv' to output/task8 directory\n")
 
-    train_df.to_csv("output/task8/mean_train.csv")
 
 # Citim dataframe-ul din fisier si determinam numarul de linii si coloane
 train_df = pd.read_csv('input/train.csv')
