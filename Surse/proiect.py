@@ -400,7 +400,7 @@ nr_columns = len(train_df.axes[1])
 nr_rows = len(train_df.axes[0])
 
 # Determinam ce task vrem sa rulam.
-# Daca nu se specifica un task, se vor executa toate.
+# Daca nu se specifica un task, se vor rula toate.
 task = 0
 if len(sys.argv) > 1:
     task = int(sys.argv[1])
