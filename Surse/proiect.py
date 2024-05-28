@@ -63,7 +63,7 @@ def task_2():
     plt.title("Survivors plot")
     plt.ylabel("Percentage")
     plt.xlabel("Survived")
-    plt.savefig("output/task2/Survivors.png")
+    plt.savefig("../output/task2/Survivors.png")
     plt.show()
 
     plt.figure()
@@ -72,7 +72,7 @@ def task_2():
     plt.title("Classes plot")
     plt.ylabel("Percentage")
     plt.xlabel("Classes")
-    plt.savefig("output/task2/Classes.png")
+    plt.savefig("../output/task2/Classes.png")
     plt.show()
 
     plt.figure()
@@ -80,7 +80,7 @@ def task_2():
     plt.title("Genders plot")
     plt.ylabel("Percentage")
     plt.xlabel("Gender")
-    plt.savefig('output/task2/Male-Female.png')
+    plt.savefig('../output/task2/Male-Female.png')
     plt.show()
 
 def task_3():
@@ -96,7 +96,7 @@ def task_3():
             plt.title(f"{column} histogram")
             plt.ylabel("Nr. People")
             plt.xlabel(column)
-            plt.savefig(f"output/task3/{column}")
+            plt.savefig(f"../output/task3/{column}")
             plt.show()
 
 def task_4():
@@ -146,7 +146,7 @@ def task_5():
             train_df.at[i, 'AgeCategory'] = 4
 
     # Salvam noul dataframe
-    train_df.to_csv("output/task5/AgeCategory_train.csv", index=False)
+    train_df.to_csv("../Date/AgeCategory_train.csv", index=False)
 
     # Realizam graficul pentru a evidentia rezultatele
     plt.figure()
@@ -155,7 +155,7 @@ def task_5():
     plt.xlabel("Age category")
     plt.xticks([0, 1, 2, 3, 4])
     plt.bar([0, 1, 2, 3, 4], category)
-    plt.savefig("output/task5/AgeCategories.png")
+    plt.savefig("../output/task5/AgeCategories.png")
     plt.show()
 
 def task_6():
@@ -163,8 +163,8 @@ def task_6():
     if task == 6:
         task_5()
 
-    # Calculam numarul total de barbati si numarul de supravietuitori in functie
-    # de categoria de varsta.
+    # Calculam numarul total de barbati si numarul de supravietuitori
+    # in functie de categoria de varsta.
     male_survivors = [0, 0, 0, 0, 0]
     total_males = [0, 0, 0, 0, 0]
     age_categories = train_df['AgeCategory']
@@ -192,7 +192,7 @@ def task_6():
     plt.xlabel("Age category")
     plt.xticks([0, 1, 2, 3, 4])
     plt.bar([0, 1, 2, 3, 4], survivors_percentage)
-    plt.savefig("output/task6/MaleSurvivors.png")
+    plt.savefig("../output/task6/MaleSurvivors.png")
     plt.show()
     print("'MaleSurvivors' graph added to output/task6 directory\n")
 
@@ -205,13 +205,18 @@ def task_7():
     children_survivors = 0
     adults_count = 0
     adults_survivors = 0
+    known_age_count = 0
     ages = train_df['Age']
     survivors = train_df['Survived']
 
-    for i in range(len(ages)):
+    for i in range(nr_rows):
+        # Daca ages[i] != ages[i], inseamna ca varsta persoanei
+        # este necunoscuta, deci nu o luam in considerare
         if ages[i] != ages[i]:
             continue
-        elif ages[i] < 18:
+        
+        known_age_count += 1
+        if ages[i] < 18:
             children_count += 1
             if survivors[i] == 1:
                 children_survivors += 1
@@ -221,21 +226,21 @@ def task_7():
                 adults_survivors += 1
 
     # Calculam procentul de copii aflati la bord.
-    children_percentage = children_count / nr_rows
+    children_percentage = children_count / known_age_count
     print(f"Percentage of children aboard: {children_percentage : %}\n")
 
     # Calculam rata de supravietuire pentru copii si adulti.
     children_surviving_rate = children_survivors / children_count
     adults_surviving_rate = adults_survivors / adults_count
-    print(f"Children rate of survival: {children_surviving_rate : 0.4f}")
-    print(f"Adult surviving rate: {adults_surviving_rate : 0.4f}\n")
+    print(f"Children survival rate: {children_surviving_rate : 0.4f}")
+    print(f"Adult survival rate: {adults_surviving_rate : 0.4f}\n")
 
     # Realizam graficul care pune in evidenta ratele de supravietuire.
     plt.figure()
     plt.title("Survival rates")
     plt.ylabel("Survival rate")
     plt.bar(['Children', 'Adults'], [children_surviving_rate, adults_surviving_rate])
-    plt.savefig("output/task7/SurvivalRates.png")
+    plt.savefig("../output/task7/SurvivalRates.png")
     plt.show()
     print("Added 'SurvivalRates' graph to output/task7 directory.\n")
 
@@ -246,7 +251,8 @@ def task_8():
     for column in train_df:
         values = train_df[column]
 
-        # Daca am gasit o coloana cu valori lipsa, verificam tipul de date din coloana.
+        # Daca am gasit o coloana cu valori lipsa, le vom inlocui cu media
+        # valorilor din coloana curenta
         if values.isnull().sum() != 0:
 
             # Impartim toate persoanele in 2 categorii, in functie de coloana 'Survived'
@@ -278,8 +284,8 @@ def task_8():
                     else:
                         train_df.at[i, column] = mean_value_1
                         
-    train_df.to_csv("output/task8/mean_train.csv", index=False)
-    print("Added 'mean_train.csv' to output/task8 directory\n")
+    train_df.to_csv("../Date/mean_train.csv", index=False)
+    print("Added 'mean_train.csv' to Date directory\n")
 
 def task_9():
     print("\n-------------- TASK 9 --------------\n")
@@ -304,13 +310,17 @@ def task_9():
             else:
                 female_dictionary[title[0]] += 1
 
+    # Afisam titlurile impreuna cu numarul de aparitii
+    print(f"Male titles: {male_dictionary}")
+    print(f"Female titles: {female_dictionary}\n")
+
     # Reprezentam grafic repartitia titlurilor de noblete
     plt.figure()
     plt.title("Male Titles")
     plt.ylabel("Number of passangers")
     plt.xlabel("Title")
     plt.bar(male_dictionary.keys(), male_dictionary.values(), width=0.5)
-    plt.savefig("output/task9/MaleTitles.png")
+    plt.savefig("../output/task9/MaleTitles.png")
     plt.show()
 
     plt.figure()
@@ -318,7 +328,7 @@ def task_9():
     plt.ylabel("Number of passangers")
     plt.xlabel("Title")
     plt.bar(female_dictionary.keys(), female_dictionary.values(), width=0.5)
-    plt.savefig("output/task9/FemaleTitles.png")
+    plt.savefig("../output/task9/FemaleTitles.png")
     plt.show()
 
     print("Added Title repartition graphs to output/task9 directory.")
@@ -366,17 +376,26 @@ def task_10():
     print(f"Percentage of people with no relatives that survived:{alone_percentage : .2%}")
     print(f"Percentage of people with relatives that survived:{not_alone_percentage : .2%}\n")
 
+    percentage = [alone_percentage, not_alone_percentage]
+
+    plt.figure()
+    plt.title("Percentage of survivors with/without relatives")
+    plt.ylabel("Percentage of survivors")
+    plt.bar(["Alone", "Not Alone"], percentage, width=0.4)
+    plt.savefig("../output/task10/Alone_Survivors.png")
+    plt.show()
+
     # Realizam graficul pentru a pune in evidenta relatia dintre tarif, clasa.
     # si starea de supravietuire a primelor 100 de inregistrari din train.csv.
     plt.figure()
     sb.catplot(data=train_df.head(100), x='Pclass', y='Fare', hue='Survived', kind="swarm", s=20, aspect=2)
-    plt.savefig("output/task10/Pclass-Fare.png")
+    plt.savefig("../output/task10/Pclass-Fare.png")
     plt.show()
     print("Added 'Pclass-Fare' relation graph to output/task10 directory\n")
 
 
 # Citim dataframe-ul din fisier si determinam numarul de linii si coloane.
-train_df = pd.read_csv('input/train.csv')
+train_df = pd.read_csv('../input/train.csv')
 nr_columns = len(train_df.axes[1])
 nr_rows = len(train_df.axes[0])
 
